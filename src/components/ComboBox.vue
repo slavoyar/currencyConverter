@@ -29,17 +29,12 @@ export default {
 
 <style>
 .combobox {
-  font-size: 14pt;
-  width: 300px;
-}
-
-.combobox-label {
-  padding: 0;
-  margin: 0;
+  width: 100%;
 }
 
 #combobox-select {
   width: 100%;
-  font-size: 14pt;
+  height: 50px;
+  font-size: 12pt;
 }
 </style>
