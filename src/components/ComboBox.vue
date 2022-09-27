@@ -2,6 +2,7 @@
 export default {
   name: 'ComboBox',
   props: ['label', 'items', 'modelValue'],
+  emits: ['update:modelValue'],
   data() {
     return {
       content: this.modelValue

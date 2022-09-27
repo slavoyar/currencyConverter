@@ -1,4 +1,6 @@
 <script>
+import axios from 'axios'
+import countryToCurrency from 'country-to-currency'
 import ComboBox from './components/ComboBox.vue'
 import TextBox from './components/TextBox.vue'
 
@@ -7,19 +9,22 @@ export default {
     ComboBox,
     TextBox
   },
-  emits: ['update:modelValue'],
   data() {
     return {
-      currencies: ['USD', 'EUR', 'RUB'],
-      fromAmount: 10,
-      toAmount: 20,
+      currencies: [],
+      fromAmount: 1,
+      toAmount: 1,
       fromCurrency: 'USD',
-      toCurrency: 'RUB'
+      toCurrency: 'EUR',
+      timer: null
     }
   },
   mounted() {
-    
-  },  
+    this.getCurrencies()
+    const currentCountry = navigator.language.split('-')[1]
+    this.fromCurrency = countryToCurrency[currentCountry]
+    this.convertCurrency()
+  },
   methods: {
     changeCurrencies() {
       const tempAmount = this.fromAmount
@@ -29,6 +34,43 @@ export default {
       const tempCurrency = this.fromCurrency
       this.fromCurrency = this.toCurrency
       this.toCurrency = tempCurrency
+    },
+    getCurrencies() {
+      axios.get('https://api.exchangerate.host/symbols')
+        .then(response => {
+          this.currencies = []
+          for (const item of Object.values(response.data.symbols)) {
+            this.currencies.push(item.code)
+          }
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    },
+    convertCurrency() {
+      const url = `https://api.exchangerate.host/convert?from=${this.fromCurrency}&to=${this.toCurrency}&amount=${this.fromAmount}`
+      axios.get(url)
+        .then(response => {
+          this.toAmount = response.data.result
+        })
+        .catch(e => {
+          console.error(e)
+        })
+    }
+  },
+  watch: {
+    fromCurrency() {
+      this.convertCurrency()
+    },
+    toCurrency() {
+      this.convertCurrency()
+    },
+    fromAmount() {
+      if (this.timer) {
+        clearTimeout(this.timer)
+        this.timer = null
+      }
+      this.timer = setTimeout(this.convertCurrency, 300)
     }
   }
 }
@@ -38,11 +80,11 @@ export default {
 <template>
   <h1>Currency converter</h1>
   <div class="container">
-    <text-box label="Amount" v-model="fromAmount" />
+    <text-box label="Amount" v-model="fromAmount"/>
     <combo-box label="From" :items="currencies" v-model="fromCurrency"></combo-box>
     <button class="change-currencies-button" @click="changeCurrencies"><img
         src="https://cdn2.iconfinder.com/data/icons/arrows-set-1/512/27-512.png" alt=""></button>
-    <text-box label="Amount" v-model="toAmount" :isReadonly="true"/>
+    <text-box label="Amount" v-model="toAmount" :isDisabled="true" />
     <combo-box label="To" :items="currencies" v-model="toCurrency"></combo-box>
   </div>
 </template>
@@ -51,8 +93,9 @@ export default {
 h1 {
   text-align: center;
   margin: 20% auto 50px;
-  
+  color: rgb(37, 37, 37);
 }
+
 .container {
   width: 620px;
   margin: 0 auto;
@@ -66,7 +109,7 @@ h1 {
   width: 50px;
   padding: 0;
   margin: 35% auto 0;
-  background-color: white;
+  background-color: transparent;
   border: 0;
   cursor: pointer;
 }

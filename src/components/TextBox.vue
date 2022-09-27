@@ -3,7 +3,8 @@ import { readonly } from 'vue';
 
 export default {
   name: 'TextBox',
-  props: ['modelValue', 'label', 'isReadonly'],
+  props: ['modelValue', 'label', 'isDisabled'],
+  emits: ['update:modelValue'],
   data() {
     return {
       content: this.modelValue
@@ -23,7 +24,7 @@ export default {
 <template>
   <div class="textbox">
     <label for="textbox-input">{{ label }}</label>
-    <input id="textbox-input" type="text" min="0" v-model="content" :readonly="isReadonly"/>
+    <input id="textbox-input" type="number" min="0" v-model="content" :disabled="isDisabled"/>
   </div>
 </template>
 
