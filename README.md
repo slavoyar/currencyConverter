@@ -1,7 +1,13 @@
-# Vue 3 + Vite
+# Currency converter
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## How to run
+1. Clone git repository to your computer.
+2. Go to project folder.
+3. Install npm packages and run dev server with following commands:
+```
+npm install
+npm run dev
+```
+4. Open browser and go to address shown in terminal (http://127.0.0.1:5173/).
 
-## Recommended IDE Setup
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
